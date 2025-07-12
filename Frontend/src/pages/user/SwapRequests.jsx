@@ -1,10 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CheckCircle, XCircle, Clock, Send, Inbox } from 'lucide-react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import SwapRequestCard from '../../components/common/SwapRequestCard';
+import { jwtDecode } from "jwt-decode";
+import axios from "axios";
 
 function SwapRequests({ currentUser }) {
+
+  const token = localStorage.getItem("");
+  console.log("curruser", currentUser);
+  const tokendeocd = jwtDecode(currentUser);
+
+  const [receivedRequests, setReceivedRequests] = useState([]);
+  const [sentRequests, setSentRequests] = useState([]);
+  console.log(tokendeocd.id)
+
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5001/api/request/requests/user/${tokendeocd.id}`);
+        const allRequests = [...response.data.data.receivedRequests, ...response.data.data.sentRequests];
+
+      // Separate by showActions flag
+      const received = allRequests.filter(r => r.showActions !== false);
+      const sent = allRequests.filter(r => r.showActions === false);
+
+      setReceivedRequests(received);
+      setSentRequests(sent);
+      } catch (error) {
+        console.error("Error fetching skill swap requests:", error.message);
+      }
+    };
+
+    fetchRequests();
+  }, [tokendeocd.id]);
+
+  console.log(sentRequests);
+  console.log(receivedRequests);
+
+
   const [activeTab, setActiveTab] = useState('received');
   
   const [requests, setRequests] = useState([
@@ -16,7 +51,7 @@ function SwapRequests({ currentUser }) {
         email: 'sarah@example.com'
       },
       to: {
-        id: currentUser.id,
+        id: tokendeocd.id,
         name: currentUser.name,
         email: currentUser.email
       },
@@ -34,7 +69,7 @@ function SwapRequests({ currentUser }) {
         email: 'mike@example.com'
       },
       to: {
-        id: currentUser.id,
+        id: tokendeocd.id,
         name: currentUser.name,
         email: currentUser.email
       },
@@ -47,7 +82,7 @@ function SwapRequests({ currentUser }) {
     {
       id: 3,
       from: {
-        id: currentUser.id,
+        id: tokendeocd.id,
         name: currentUser.name,
         email: currentUser.email
       },
@@ -70,7 +105,7 @@ function SwapRequests({ currentUser }) {
         email: 'david@example.com'
       },
       to: {
-        id: currentUser.id,
+        id: tokendeocd.id,
         name: currentUser.name,
         email: currentUser.email
       },
@@ -82,7 +117,7 @@ function SwapRequests({ currentUser }) {
     {
       id: 5,
       from: {
-        id: currentUser.id,
+        id: tokendeocd.id,
         name: currentUser.name,
         email: currentUser.email
       },
@@ -98,31 +133,37 @@ function SwapRequests({ currentUser }) {
     }
   ]);
 
-  const receivedRequests = requests.filter(request => request.to.id === currentUser.id);
-  const sentRequests = requests.filter(request => request.from.id === currentUser.id);
+  // const receivedRequests = requests.filter(request => request.to.id === tokendeocd.id);
+  // const sentRequests = requests.filter(request => request.from.id === tokendeocd.id);
 
-  const handleAccept = (requestId) => {
-    setRequests(prev => 
-      prev.map(request => 
-        request.id === requestId 
-          ? { ...request, status: 'accepted' }
-          : request
+ const handleAccept = async (requestId) => {
+  try {
+    await axios.put(`http://localhost:5001/api/request/update-status/${requestId}`, { status: "accepted" });
+    setReceivedRequests(prev =>
+      prev.map(req =>
+        req.request_id === requestId ? { ...req, status: "Accepted", showActions: false } : req
       )
     );
-  };
+  } catch (err) {
+    console.error("Failed to accept:", err.message);
+  }
+};
 
-  const handleReject = (requestId) => {
-    setRequests(prev => 
-      prev.map(request => 
-        request.id === requestId 
-          ? { ...request, status: 'rejected' }
-          : request
+const handleReject = async (requestId) => {
+  try {
+    await axios.put(`http://localhost:5001/api/request/update-status/${requestId}`, { status: "rejected" });
+    setReceivedRequests(prev =>
+      prev.map(req =>
+        req.request_id === requestId ? { ...req, status: "Rejected", showActions: false } : req
       )
     );
-  };
+  } catch (err) {
+    console.error("Failed to reject:", err.message);
+  }
+};
 
   const handleCancel = (requestId) => {
-    setRequests(prev => prev.filter(request => request.id !== requestId));
+    setRequests(prev => prev.filter(request => request.showActions !== requestId));
   };
 
   const getTabCount = (tab) => {
@@ -190,13 +231,13 @@ function SwapRequests({ currentUser }) {
           {currentRequests.length > 0 ? (
             currentRequests.map(request => (
               <SwapRequestCard
-                key={request.id}
-                request={request}
-                currentUser={currentUser}
-                onAccept={handleAccept}
-                onReject={handleReject}
-                onCancel={activeTab === 'sent' ? handleCancel : undefined}
-              />
+  key={request.request_id}
+  request={request}
+  currentUser={currentUser}
+  onAccept={handleAccept}
+  onReject={handleReject}
+  onCancel={activeTab === 'sent' ? handleCancel : undefined}
+/>
             ))
           ) : (
             <Card>
@@ -237,7 +278,7 @@ function SwapRequests({ currentUser }) {
                 <div className="flex items-center justify-center mb-2">
                   <Clock className="w-5 h-5 text-yellow-500 mr-2" />
                   <span className="text-2xl font-bold text-gray-900">
-                    {currentRequests.filter(r => r.status === 'pending').length}
+                    {currentRequests.filter(r => r.status === 'Pending').length}
                   </span>
                 </div>
                 <p className="text-sm text-gray-600">Pending</p>
@@ -249,7 +290,7 @@ function SwapRequests({ currentUser }) {
                 <div className="flex items-center justify-center mb-2">
                   <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
                   <span className="text-2xl font-bold text-gray-900">
-                    {currentRequests.filter(r => r.status === 'accepted').length}
+                    {currentRequests.filter(r => r.status === 'Accepted').length}
                   </span>
                 </div>
                 <p className="text-sm text-gray-600">Accepted</p>

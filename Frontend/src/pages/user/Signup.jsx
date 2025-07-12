@@ -19,7 +19,7 @@ function Signup({ setCurrentUser }) {
         setSkillData(res.data);
       })
       .catch((err) => {
-        console.log(error);
+        console.log(err);
       });
   }, []);
   console.log(skillData);

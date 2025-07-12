@@ -23,7 +23,7 @@ const RequestSkillSchema = new Schema({
   },
   message: {
     type: String, // 0 = offered, 1 = wanted
-    enum: [0, 1],
+    // enum: [0, 1],
     required: true
   },
   accept:{
