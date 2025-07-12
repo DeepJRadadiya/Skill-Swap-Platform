@@ -2,7 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./utils/db'); // Your db.js file
-const User = require('./models/User');     // Your User model
+const User = require('./models/User'); 
+const authRouter = require('./routes/auth-route');    // Your User model
 
 dotenv.config();
 const app = express();
@@ -68,6 +69,8 @@ app.get('/seed', async (req, res) => {
 //     res.status(500).json({ error: error.message });
 //   }
 // });
+
+app.use('/api/auth', authRouter);
 
 // Start server
 connectDB().then(() => {

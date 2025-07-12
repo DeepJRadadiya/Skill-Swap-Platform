@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // URI ="mongodb://127.0.0.1:27017/skill_swap";
-URI ="mongodb+srv://user:mongodbuser@cluster0.hwpnv2w.mongodb.net/skill_swap?retryWrites=true&w=majority&appName=Cluster0";
+URI ="mongodb://localhost:27017/skill_swap";
 
 
 const connectDB = async () =>{

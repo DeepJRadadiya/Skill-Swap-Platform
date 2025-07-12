@@ -3,7 +3,6 @@ const { model, Schema } = require('mongoose');
 const userSchema = new Schema({
   name: {
     type: String,
-    required: true
   },
   email: {
     type: String,
@@ -23,8 +22,7 @@ const userSchema = new Schema({
     default: null
   },
   availability: {
-    type: String,
-    required: true
+    type: String
   },
   is_public: {
     type: Boolean,
