@@ -11,7 +11,7 @@ router
 
 router
     .route("/getskill")
-    .post(skillcontroller.getAllSkills);
+    .get(skillcontroller.getAllSkills);
 
 router
     .route("/bulk")
