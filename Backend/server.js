@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const connectDB = require('./utils/db'); // Your db.js file
 const User = require('./models/User'); 
 const authRouter = require('./routes/auth-route');    // Your User model
+const skilRouter = require('./routes/skill-route');    // Your User model
 
 dotenv.config();
 const app = express();
@@ -71,6 +72,7 @@ app.get('/seed', async (req, res) => {
 // });
 
 app.use('/api/auth', authRouter);
+app.use('/api/skill', skilRouter);
 
 // Start server
 connectDB().then(() => {
