@@ -1,21 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { UserPlus, Eye, EyeOff, Upload } from "lucide-react";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import FormField from "../../components/ui/FormField";
-import { registerUser } from "../../utils/api";
-import Select from 'react-select';
-import useSignUp from "../../hooks/useSignup"
-import useSkill from "../../hooks/useSkill"
+import Select from "react-select";
+import axios from "axios";
+import { axiosInstance } from "../../utils/axios";
 
 function Signup({ setCurrentUser }) {
   const navigate = useNavigate();
-  const { isPending, error, signupMutation } = useSignUp();
-  const { getSkill } = useSkill();
+  const [skillData, setSkillData] = useState([]);
 
-  console.log(getSkill)
-
+  useEffect(() => {
+    axios
+      .get("http://localhost:5001/api/skill/getskill")
+      .then((res) => {
+        setSkillData(res.data);
+      })
+      .catch((err) => {
+        console.log(error);
+      });
+  }, []);
+  console.log(skillData);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -25,10 +32,11 @@ function Signup({ setCurrentUser }) {
     password: "",
     confirmPassword: "",
     location: "",
-    isPublic: true,
-    skillsOffered: [],
-    skillsWanted: [],
+    is_public: true,
+    offered_skills: [],
+    wanted_skills: [],
     availability: "weekends",
+    profile_photo: "https://example.com/avatar.jpg",
   });
   const [errors, setErrors] = useState({});
 
@@ -40,62 +48,27 @@ function Signup({ setCurrentUser }) {
     }));
   };
 
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
-    }
-
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
-    if (validateForm()) {
-      signupMutation({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        location: formData.location,
-        profile_photo: "https://example.com/profile.jpg",
-        availability: formData.availability,
-        is_public: formData.isPublic,
-        userType: "user",
-        offered_skills: formData.skillsOffered,
-        wanted_skills: formData.skillsWanted
-      });
+
+    try {
+      const response = await axiosInstance.post("/auth/register", formData);
+      const { token, user } = response.data;
+      localStorage.setItem("token", token);
+      if (setCurrentUser) setCurrentUser(user);
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      setCurrentUser(user);
+      navigate("/dashboard");
+    } catch (err) {
+      console.error("Signup error:", err);
+      alert("Failed to register. Please try again.");
     }
   };
 
-  const skillOptions = [
-  { value: 'Web Development', label: 'Web Development' },
-  { value: 'Photography', label: 'Photography' },
-  { value: 'Cooking', label: 'Cooking' },
-  { value: 'Guitar', label: 'Guitar' },
-  { value: 'Spanish', label: 'Spanish' },
-  { value: 'Marketing', label: 'Marketing' },
-  // Add more options as needed
-];
-
+  const skillOptions = skillData.map((skill) => ({
+    value: skill._id,
+    label: skill.name,
+  }));
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
@@ -197,15 +170,19 @@ function Signup({ setCurrentUser }) {
               <FormField label="Skills You Can Offer">
                 <Select
                   isMulti
-                  name="skillsOffered"
+                  name="offered_skills"
                   options={skillOptions}
                   className="basic-multi-select"
                   classNamePrefix="select"
-                  value={formData.skillsOffered}
+                  value={skillOptions.filter(
+                    (option) => formData.offered_skills.includes(option.value) // show names by matching ids
+                  )}
                   onChange={(selectedOptions) =>
                     setFormData({
                       ...formData,
-                      skillsOffered: selectedOptions,
+                      offered_skills: selectedOptions.map(
+                        (option) => option.value
+                      ),
                     })
                   }
                 />
@@ -214,15 +191,19 @@ function Signup({ setCurrentUser }) {
               <FormField label="Skills You Want to Learn">
                 <Select
                   isMulti
-                  name="skillsWanted"
+                  name="wanted_skills"
                   options={skillOptions}
                   className="basic-multi-select"
                   classNamePrefix="select"
-                  value={formData.skillsWanted}
+                  value={skillOptions.filter(
+                    (option) => formData.wanted_skills.includes(option.value) // show names by matching ids
+                  )}
                   onChange={(selectedOptions) =>
                     setFormData({
                       ...formData,
-                      skillsWanted: selectedOptions,
+                      wanted_skills: selectedOptions.map(
+                        (option) => option.value
+                      ),
                     })
                   }
                 />
@@ -243,15 +224,15 @@ function Signup({ setCurrentUser }) {
 
               <div className="flex items-center">
                 <input
-                  id="isPublic"
-                  name="isPublic"
+                  id="is_public"
+                  name="is_public"
                   type="checkbox"
-                  checked={formData.isPublic}
+                  checked={formData.is_public}
                   onChange={handleChange}
                   className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                 />
                 <label
-                  htmlFor="isPublic"
+                  htmlFor="is_public"
                   className="ml-2 text-sm text-gray-700"
                 >
                   Make my profile public (others can find and connect with me)

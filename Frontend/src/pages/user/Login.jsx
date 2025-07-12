@@ -4,15 +4,12 @@ import { LogIn, Eye, EyeOff } from "lucide-react";
 import Card from "../../components/ui/Card";
 import Button from "../../components/ui/Button";
 import FormField from "../../components/ui/FormField";
-import {login} from "../../utils/api"
-import useLogin from "../../hooks/useLogin";
+import axios from "axios";
 
 function Login({ setCurrentUser, setIsAdmin }) {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
-  const { isPending, error, loginMutation } = useLogin();
-
 
   const [formData, setFormData] = useState({
     email: "",
@@ -46,19 +43,30 @@ function Login({ setCurrentUser, setIsAdmin }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      loginMutation(formData)
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-      setCurrentUser(mockUser);
-      setIsAdmin(false);
-    }
-    else{
-      console.log("Data uplode error" )
-    }
+  if (!validateForm()) return;
 
-  };
+  try {
+    const response = await axios.post("http://localhost:5001/api/auth/login", formData);
+    console.log(response)
+
+    const { token } = response.data;
+
+    // Store token in localStorage
+    localStorage.setItem("token", token);
+
+    // Set user and admin status
+    setCurrentUser(response.data.token);
+    setIsAdmin(response.data.userType === "admin");
+    // Navigate to dashboard or home
+    navigate("/dashboard");
+  } catch (error) {
+    console.error("Login error:", error.response?.data?.message || error.message);
+    setErrors({ ...errors, general: error.response?.data?.message || "Login failed" });
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

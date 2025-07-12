@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Filter, MapPin, Clock, Star } from 'lucide-react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import FormField from '../../components/ui/FormField';
 import SkillCard from '../../components/common/SkillCard';
 import Modal from '../../components/ui/Modal';
+import axios from 'axios';
 
 function BrowseSkills({ currentUser }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,62 +14,30 @@ function BrowseSkills({ currentUser }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [swapMessage, setSwapMessage] = useState('');
 
-  const [users] = useState([
-    {
-      id: 2,
-      name: 'Sarah Johnson',
-      location: 'New York, NY',
-      rating: 4.9,
-      availability: 'weekends',
-      skillsOffered: ['Photography', 'Photo Editing', 'Adobe Lightroom'],
-      skillsWanted: ['Web Development', 'React', 'JavaScript']
-    },
-    {
-      id: 3,
-      name: 'Mike Chen',
-      location: 'San Francisco, CA',
-      rating: 4.7,
-      availability: 'evenings',
-      skillsOffered: ['Python', 'Data Science', 'Machine Learning'],
-      skillsWanted: ['UI/UX Design', 'Figma', 'User Research']
-    },
-    {
-      id: 4,
-      name: 'Emma Wilson',
-      location: 'Austin, TX',
-      rating: 4.8,
-      availability: 'flexible',
-      skillsOffered: ['Graphic Design', 'Branding', 'Illustrator'],
-      skillsWanted: ['Digital Marketing', 'SEO', 'Content Strategy']
-    },
-    {
-      id: 5,
-      name: 'David Brown',
-      location: 'Seattle, WA',
-      rating: 4.6,
-      availability: 'weekdays',
-      skillsOffered: ['Digital Marketing', 'Social Media', 'Analytics'],
-      skillsWanted: ['Video Editing', 'After Effects', 'Motion Graphics']
-    },
-    {
-      id: 6,
-      name: 'Lisa Garcia',
-      location: 'Los Angeles, CA',
-      rating: 4.9,
-      availability: 'weekends',
-      skillsOffered: ['Spanish Language', 'Translation', 'Writing'],
-      skillsWanted: ['Cooking', 'Baking', 'Pastry Making']
-    },
-    {
-      id: 7,
-      name: 'Alex Thompson',
-      location: 'Denver, CO',
-      rating: 4.5,
-      availability: 'evenings',
-      skillsOffered: ['Guitar', 'Music Theory', 'Songwriting'],
-      skillsWanted: ['Photography', 'Portrait Photography', 'Photo Editing']
-    }
-  ]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const res = await axios.get('http://localhost:5001/api/auth/usersDetails');
+        const formattedUsers = res.data.users.map((user, index) => ({
+          id: index + 1,
+          name: user.name,
+          location: user.location,
+          rating: user.rating || 0,
+          availability: user.availability?.toLowerCase() || 'not specified',
+          skillsOffered: user.offered_skills || [],
+          skillsWanted: user.wanted_skills || [],
+        }));
+        setUsers(formattedUsers);
+      } catch (err) {
+        console.error('Error fetching users:', err);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+  
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = searchTerm === '' || 

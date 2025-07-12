@@ -7,6 +7,7 @@ const useSkill = () => {
   const { mutate, isPending, error } = useMutation({
     mutationFn: getSkill,
     onSuccess: () => console.log("Skill",mutate),
+    onError: (error) => console.log(error)
   });
 
   return { isPending, error, getSkill: mutate };

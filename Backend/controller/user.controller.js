@@ -109,7 +109,7 @@ const login = async (req, res) => {
     res.status(200).json({
       message: "Login successful",
       token,
-      userName: newUser.name,
+      userName: user.name,
       userId: user._id,
       userType: user.is_admin ? "admin" : "user",
     });

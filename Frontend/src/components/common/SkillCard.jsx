@@ -57,7 +57,7 @@ function SkillCard({ user, onConnect }) {
                 ))}
               </div>
             </div>
-            
+
             <Button 
               onClick={() => onConnect(user)}
               className="w-full"

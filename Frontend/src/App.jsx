@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -20,15 +20,22 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import Home from './pages/Home';
 
 
-import { useAuthUser } from './hooks/useAuthUser';
 
 function App() {
   const [currentUser, setCurrentUser] = React.useState(null);
   const [isAdmin, setIsAdmin] = React.useState(false);
-  const { isLoading, authUser } = useAuthUser();
+  const [isAuth, setIsAuth] = useState(false)
 
-  console.log("authUser",authUser)
-
+  useEffect(()=>{
+    const token = localStorage.getItem('token')
+    if(token){
+      console.log(token)
+      setIsAuth(true)
+    }
+    else{
+      console.log("token error")
+    }
+  },[])
 
   // Mock authentication check
   React.useEffect(() => {

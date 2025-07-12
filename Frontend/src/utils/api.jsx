@@ -2,7 +2,7 @@ import { axiosInstance } from "./axios";
 
 
 export const registerUser = async (signupData) =>{
-    const response = await axiosInstance.post("/auth/register", signupData);
+    const response = await axiosInstance.post("/auth/register", signupData)
     return response.data;
 }
 
@@ -14,8 +14,8 @@ export const login = async (loginData) => {
 
 
 export const getSkill = async () => {
-    const response = await axiosInstance.get("/skill/bulk");
-    return response.data;
+    const response = await axiosInstance.get("/skill/getskill");
+    return response;
 }
 
 
