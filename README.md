@@ -36,6 +36,11 @@ A MERN-based web application that allows users to **offer** and **request skills
 - MongoDB (Mongoose)
 - JWT Authentication
 
+- ## 🎥 Demo Video
+
+[![Watch the video](https://img.youtube.com/vi/wN-gnK0z3iY/0.jpg)](https://youtu.be/wN-gnK0z3iY)
+
+
 🎥 [Watch Demo Video](https://drive.google.com/file/d/1GljHK9516Zp6VWK-kJ_A9X9hjs0yZdsc/view?usp=sharing&t=9)
 
 
