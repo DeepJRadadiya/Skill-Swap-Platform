@@ -27,6 +27,10 @@ router
 router
     .route("/login")
     .post(validate(loginSchema),authcontrollers.login);
+    
+router
+    .route("/usersDetails")
+    .get(authcontrollers.getAllUsersWithSkills);
 
 
 module.exports = router;

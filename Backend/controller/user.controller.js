@@ -1,10 +1,19 @@
 const bcrypt = require("bcryptjs");
 const User = require('../models/User');
 const jwt = require("jsonwebtoken");
+const UserSkill = require("../models/UserSkill");
 
 const register = async (req, res) => {
   try {
-    const { name, email, password, location, availability,  profile_photo, is_public } = req.body;
+    const { name, 
+      email, 
+      password, 
+      location, 
+      availability,  
+      profile_photo, 
+      is_public,
+      offered_skills,
+      wanted_skills } = req.body;
 
     // Check if user already exists
     const userExists = await User.findOne({ email });
@@ -28,6 +37,27 @@ const register = async (req, res) => {
     //   is_admin: userType === "admin",         // determine admin role
       rating: 0                                // initial rating
     });
+
+    const offeredEntries = offered_skills?.map(skillId => ({
+      user_id: newUser._id,
+      skill_id: skillId,
+      skill_role: 0,
+    }));
+
+    // Insert Wanted Skills (1)
+    const wantedEntries = wanted_skills?.map(skillId => ({
+      user_id: newUser._id,
+      skill_id: skillId,
+      skill_role: 1,
+    }));
+
+    const allSkills = [...(offeredEntries || []), ...(wantedEntries || [])];
+
+    if (allSkills.length > 0) {
+      await UserSkill.insertMany(allSkills);
+    }
+
+
 
     // Generate JWT token
     const token = jwt.sign(
@@ -88,4 +118,46 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register,login };
+const getAllUsersWithSkills = async (req, res) => {
+  try {
+    // Fetch all users
+    const users = await User.find();
+
+    // For each user, fetch their offered and wanted skills
+    const usersWithSkills = await Promise.all(
+      users.map(async (user) => {
+        const userSkills = await UserSkill.find({ user_id: user._id }).populate("skill_id");
+
+        const offeredSkills = userSkills
+          .filter(skill => skill.skill_role === 0)
+          .map(skill => skill.skill_id.name);
+
+        const wantedSkills = userSkills
+          .filter(skill => skill.skill_role === 1)
+          .map(skill => skill.skill_id.name);
+
+        return {
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          location: user.location,
+          profile_photo: user.profile_photo,
+          availability: user.availability,
+          is_public: user.is_public,
+          is_admin: user.is_admin,
+          rating: user.rating,
+          created_at: user.created_at,
+          offered_skills: offeredSkills,
+          wanted_skills: wantedSkills
+        };
+      })
+    );
+
+    res.status(200).json({ users: usersWithSkills });
+
+  } catch (error) {
+    console.error("Error in getAllUsersWithSkills:", error.message);
+    res.status(500).json({ message: "Failed to fetch users with skills." });
+  }
+};
+module.exports = { register,login,getAllUsersWithSkills };
