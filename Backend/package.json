@@ -1,0 +1,19 @@
+{
+  "name": "skill-swap-platform",
+  "version": "1.0.0",
+  "description": "A MERN-based web application that allows users to **offer** and **request skills** from others — promoting collaborative learning without the exchange of money.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "mongoose": "^8.16.3",
+    "nodemon": "^3.1.10"
+  }
+}
