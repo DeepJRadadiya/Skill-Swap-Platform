@@ -10,8 +10,8 @@ router
     .post(validate(skillSchema),skillcontroller.createSkill);
 
 router
-    .get("/getskill")
-    .post(skillcontroller.getAllSkills);
+    .route("/getskill")
+    .get(skillcontroller.getAllSkills);
 
 router
     .route("/bulk")

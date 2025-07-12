@@ -75,6 +75,9 @@ app.get('/seed', async (req, res) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/skill', skilRouter);
+const requestRoutes = require('./routes/request-route');
+app.use('/api/request', requestRoutes);
+
 
 // Start server
 connectDB().then(() => {

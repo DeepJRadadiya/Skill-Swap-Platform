@@ -2,6 +2,7 @@ const bcrypt = require("bcryptjs");
 const User = require('../models/User');
 const jwt = require("jsonwebtoken");
 const UserSkill = require("../models/UserSkill");
+// const Skill = require("../models/Skill");
 
 const register = async (req, res) => {
   try {
@@ -183,5 +184,49 @@ const updateUserProfile = async (req, res) => {
     res.status(500).json({ message: "Error updating profile", error: error.message });
   }
 };
+
+// const getAllUsersWithSkills = async (req, res) => {
+//   try {
+//     const users = await User.find();
+
+//     const userData = await Promise.all(users.map(async (user) => {
+//       const skills = await UserSkill.find({ user_id: user._id }).populate("skill_id", "name");
+
+//       const offeredSkills = skills
+//         .filter(skill => skill.skill_role === 0)
+//         .map(skill => skill.skill_id?.name);
+
+//       const wantedSkills = skills
+//         .filter(skill => skill.skill_role === 1)
+//         .map(skill => skill.skill_id?.name);
+
+//       return {
+//         _id: user._id,
+//         name: user.name,
+//         email: user.email,
+//         location: user.location,
+//         profile_photo: user.profile_photo,
+//         availability: user.availability,
+//         is_public: user.is_public,
+//         rating: user.rating,
+//         offered_skills: offeredSkills,
+//         wanted_skills: wantedSkills,
+//         created_at: user.created_at,
+//         updated_at: user.updated_at,
+//       };
+//     }));
+
+//     res.status(200).json({
+//       message: "All users with their skills fetched successfully",
+//       count: userData.length,
+//       users: userData
+//     });
+
+//   } catch (error) {
+//     console.error("Error in getAllUsersWithSkills:", error.message);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// };
+
 
 module.exports = { register,login,getAllUsersWithSkills,updateUserProfile };

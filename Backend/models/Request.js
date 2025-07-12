@@ -1,30 +1,41 @@
 const { Schema, model, Types } = require('mongoose');
 
-const userSkillSchema = new Schema({
-  user_id: {
-    type: Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
-  skill_id: {
+const RequestSkillSchema = new Schema({
+  offered_skill_id: {
     type: Types.ObjectId,
     ref: 'Skill',
     required: true
   },
-  skill_role: {
-    type: Number, // 0 = offered, 1 = wanted
+  wanted_skill_id: {
+    type: Types.ObjectId,
+    ref: 'Skill',
+    required: true
+  },
+  offered_user_id: {
+    type: Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  wanted_user_id: {
+    type: Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  message: {
+    type: String, // 0 = offered, 1 = wanted
     enum: [0, 1],
     required: true
   },
-  created_at: {
-    type: Date,
-    default: Date.now
+  accept:{
+    type: Number,
   },
-  updatedAt: {
-    type: Date,
-    default: Date.now
+  pending:{
+    type: Number,
   },
+  reject:{
+    type: Number,
+  }
 });
 
-const UserSkill = model('UserSkill', userSkillSchema);
-module.exports = UserSkill;
+const RequestSkill = model('RequestSkill', RequestSkillSchema);
+module.exports = RequestSkill;
