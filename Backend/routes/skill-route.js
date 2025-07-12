@@ -10,7 +10,7 @@ router
     .post(validate(skillSchema),skillcontroller.createSkill);
 
 router
-    .route("/getskill")
+    .get("/getskill")
     .post(skillcontroller.getAllSkills);
 
 router
