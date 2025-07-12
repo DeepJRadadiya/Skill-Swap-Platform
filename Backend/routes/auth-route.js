@@ -4,6 +4,7 @@ const authcontrollers = require('../controller/user.controller');
 const validate = require('../middlewares/validate_midelware');
 // const authMiddleware = require('../midellwares/authMiddleware');
 const {loginSchema} = require('../validators/auth-validator');
+const upload = require("../middlewares/upload.middleware");
 // const forgotPassword = require('../contoller/forgotPassword-controller');
 
 // router.route("/").get(authcontrollers.home);
@@ -31,6 +32,9 @@ router
 router
     .route("/usersDetails")
     .get(authcontrollers.getAllUsersWithSkills);
+
+router.patch("/user/update", upload.single("profile_photo"), authcontrollers.updateUserProfile);
+
 
 
 module.exports = router;

@@ -160,4 +160,28 @@ const getAllUsersWithSkills = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch users with skills." });
   }
 };
-module.exports = { register,login,getAllUsersWithSkills };
+
+const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.body.user_id;
+    const updateData = req.body;
+
+    if (req.file) {
+      updateData.profile_photo = req.file.filename; // ✅ only file name
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, { new: true });
+
+    res.status(200).json({
+      message: "User profile updated",
+      user: {
+        ...updatedUser.toObject(),
+        profile_photo_url: `${req.protocol}://${req.get("host")}/uploads/${updatedUser.profile_photo}`
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating profile", error: error.message });
+  }
+};
+
+module.exports = { register,login,getAllUsersWithSkills,updateUserProfile };

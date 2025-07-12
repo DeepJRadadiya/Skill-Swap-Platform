@@ -6,6 +6,7 @@ const User = require('./models/User');
 const authRouter = require('./routes/auth-route');    // Your User model
 const skilRouter = require('./routes/skill-route');    // Your User model
 
+const path = require('path');
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -18,6 +19,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Middleware
 app.use(express.json());
 
