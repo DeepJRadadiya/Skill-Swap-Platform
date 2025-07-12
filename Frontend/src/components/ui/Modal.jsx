@@ -35,6 +35,7 @@ function Modal({ isOpen, onClose, title, children, size = "md" }) {
           <div className="px-6 py-4">
             {children}
           </div>
+          
         </div>
       </div>
     </div>

@@ -18,6 +18,10 @@ function Dashboard({ currentUser }) {
   //  const token = localStorage.getItem("token");
   //  currentUser = jwtDecode(token);
   // console.log("curruser", currentUser);
+  const tokendeocd = jwtDecode(currentUser);
+
+  
+
   currentUser = {  id: 1,
         name: 'John Doe',
         email: "deep@gamil.com",
