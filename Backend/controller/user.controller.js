@@ -40,6 +40,7 @@ const register = async (req, res) => {
     res.status(201).json({
       message: "Registration successful",
       token,
+      userName: newUser.name,
       userId: newUser._id,
       userType: newUser.is_admin ? "admin" : "user",
 
@@ -77,6 +78,7 @@ const login = async (req, res) => {
     res.status(200).json({
       message: "Login successful",
       token,
+      userName: newUser.name,
       userId: user._id,
       userType: user.is_admin ? "admin" : "user",
     });
