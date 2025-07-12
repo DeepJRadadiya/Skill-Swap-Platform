@@ -1,0 +1,13 @@
+const express = require('express');
+const router = express.Router();
+const skillcontroller = require('../controller/skill.controller');
+const validate = require('../middlewares/validate_midelware');
+const {skillSchema} = require('../validators/skill-validator');
+
+
+
+router
+    .route("/createskill")
+    .post(validate(skillSchema),skillcontroller.createSkill);
+
+module.exports = router;
