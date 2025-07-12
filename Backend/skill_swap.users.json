@@ -1,0 +1,84 @@
+[{
+  "_id": {
+    "$oid": "6871e65ae2cda9fde4165104"
+  },
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "hashedpassword123",
+  "location": "New York",
+  "profile_photo": "https://example.com/profile.jpg",
+  "availability": "Weekends",
+  "is_public": true,
+  "is_admin": false,
+  "rating": 4.5,
+  "created_at": {
+    "$date": "2025-07-12T04:36:42.167Z"
+  },
+  "updated_at": {
+    "$date": "2025-07-12T04:36:42.198Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6871eee6237d15161bcedf5d"
+  },
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "password": "$2b$10$HGequv3FRE3tmLCi7ui5r.z3aE2GeECtmWLdhvtH/5DaYV6ceXEE6",
+  "location": "San Francisco",
+  "profile_photo": "https://example.com/profile.jpg",
+  "availability": "Evenings",
+  "is_public": true,
+  "is_admin": false,
+  "rating": 0,
+  "created_at": {
+    "$date": "2025-07-12T05:13:10.949Z"
+  },
+  "updated_at": {
+    "$date": "2025-07-12T05:13:10.960Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6871ef30ec3287a8064d4192"
+  },
+  "name": "Jane Doe",
+  "email": "arpit@gmail.com",
+  "password": "$2b$10$UtUNPQ1o2V8PKDE0ye3bwOXazJrEAISO0e.f08BzvqtlN4xoHtT9O",
+  "location": "San Francisco",
+  "profile_photo": "https://example.com/profile.jpg",
+  "availability": "Evenings",
+  "is_public": true,
+  "is_admin": false,
+  "rating": 0,
+  "created_at": {
+    "$date": "2025-07-12T05:14:24.704Z"
+  },
+  "updated_at": {
+    "$date": "2025-07-12T05:14:24.717Z"
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "6871f6bb176007ed9374ac0c"
+  },
+  "name": "Main Admin",
+  "email": "admin@gmail.com",
+  "password": "$2b$10$1E46JG149u3K578U//BQBOpUl3NfC3NoIURuWVZb0uDtXG0bAZ6D6",
+  "location": "San Francisco",
+  "profile_photo": "https://example.com/profile.jpg",
+  "availability": "Evenings",
+  "is_public": true,
+  "is_admin": true,
+  "rating": 0,
+  "created_at": {
+    "$date": "2025-07-12T05:46:35.553Z"
+  },
+  "updated_at": {
+    "$date": "2025-07-12T05:46:35.566Z"
+  },
+  "__v": 0
+}]

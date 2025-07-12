@@ -41,7 +41,8 @@ const register = async (req, res) => {
       message: "Registration successful",
       token,
       userId: newUser._id,
-      userType: newUser.is_admin,
+      userType: newUser.is_admin ? "admin" : "user",
+
     });
 
   } catch (error) {
@@ -49,4 +50,40 @@ const register = async (req, res) => {
   }
 };
 
-module.exports = { register };
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // 1. Check if user exists
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // 2. Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+
+    // 3. Generate JWT token
+    const token = jwt.sign(
+      {  id: user._id, email: user.email, role: user.is_public},
+      process.env.JWT_SECRET || "secret_key",
+      { expiresIn: "7d" }
+    );
+
+    // 4. Send response
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      userId: user._id,
+      userType: user.is_admin ? "admin" : "user",
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+module.exports = { register,login };

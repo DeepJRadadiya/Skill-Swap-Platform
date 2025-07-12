@@ -1,2 +1,6 @@
 https://documenter.getpostman.com/view/32223190/2sB34fngc4
 
+Register API -> http://localhost:5001/api/auth/register
+Login API -> http://localhost:5001/api/auth/login
+
+user data -> skill_swap.users.json
