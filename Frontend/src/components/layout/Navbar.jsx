@@ -177,4 +177,4 @@ function Navbar({ currentUser, setCurrentUser, isAdmin }) {
   );
 }
 
-export default Navbar;
+export default Navbar;
