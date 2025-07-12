@@ -19,9 +19,16 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 // Landing Page
 import Home from './pages/Home';
 
+
+import { useAuthUser } from './hooks/useAuthUser';
+
 function App() {
   const [currentUser, setCurrentUser] = React.useState(null);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const { isLoading, authUser } = useAuthUser();
+
+  console.log("authUser",authUser)
+
 
   // Mock authentication check
   React.useEffect(() => {
